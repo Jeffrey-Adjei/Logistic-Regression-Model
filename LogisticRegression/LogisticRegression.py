@@ -26,13 +26,12 @@ def train_logistic_regression_model(x_train, y_train):
     logreg.fit(x_train, y_train)
     return logreg
 
-def model_predictions(logreg):
+def model_predictions(logreg, x_test):
     y_pred = logreg.predict(x_test)
     return y_pred
 
 def confusion_matrix_evaluation(y_test, y_pred):
-    target_variables = [0,1]
-    fig, ax = plt.subplots()
+    pass
 
 
 
