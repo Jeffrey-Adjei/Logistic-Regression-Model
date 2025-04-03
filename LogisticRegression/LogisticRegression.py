@@ -40,7 +40,7 @@ def confusion_matrix_evaluation(y_test, y_pred):
 	fig, ax = plt.subplots()
 	tick_marks = np.arange(len(target_class))
 	plt.xticks(tick_marks, target_class)
-	plt.yticks(tick_marks,target_class)
+	plt.yticks(tick_marks, target_class)
 
 	#plot heatmap
 	sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="crest")
@@ -51,7 +51,13 @@ def confusion_matrix_evaluation(y_test, y_pred):
 	plt.xlabel('Predicted label')
 	plt.show()
 
-
+def roc_curve(x_test, y_test, logreg):
+	y_pred_probability = logreg.predict(x_test)[::1]
+	fpr, tpr, _ = metrics.roc_curve(y_test, y_pred_probability)
+	auc = metrics.roc_auc_score(y_test, y_pred_probability)
+	plt.plot(fpr, tpr, label="data 1, auc=" + str(auc))
+	plt.legend(loc=4)
+	plt.show()
 
 if __name__ == "__main__":
 	data = load_dataset()
@@ -61,3 +67,4 @@ if __name__ == "__main__":
 	y_pred = model_predictions(logreg, x_test)
 	print(classification_report(y_test, y_pred))
 	confusion_matrix_evaluation(y_test, y_pred)
+
