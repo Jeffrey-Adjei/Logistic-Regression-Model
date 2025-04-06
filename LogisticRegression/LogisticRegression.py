@@ -3,20 +3,26 @@
 import numpy as np
 import	pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import train_test_split
+
 from sklearn.linear_model import LogisticRegression
-from sklearn import metrics
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.metrics import classification_report
 
 def load_dataset():
 	data = pd.read_csv('diabetes.csv')
 	return data
 
+def redundant_data_removal(data):
+	data.isna().sum()
+
 def define_variables(data):
-	x = data.drop('Outcome', axis='columns')
-	y = data['Outcome']
-	return x, y
+	x = np.array(data.drop('Outcome', axis='columns'))
+	y = np.array(data['Outcome'])
+	x_scaled = StandardScaler().fit_transform(x)
+	return x_scaled, y
 
 def split_dataset(x, y):
 	x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=16)
@@ -35,29 +41,15 @@ def classification_evaluation_report(y_test, y_pred):
 	return classification_report(y_test, y_pred)
 
 def confusion_matrix_evaluation(y_test, y_pred):
-	cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
-	target_class =[0,1]
-	fig, ax = plt.subplots()
-	tick_marks = np.arange(len(target_class))
-	plt.xticks(tick_marks, target_class)
-	plt.yticks(tick_marks, target_class)
-
-	#plot heatmap
-	sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="crest")
-	ax.xaxis.set_label_position("top")
-	plt.tight_layout()
-	plt.title('Confusion matrix')
-	plt.ylabel('Actual label')
-	plt.xlabel('Predicted label')
+	conf_matrix = confusion_matrix(y_test, y_pred)
+	display = ConfusionMatrixDisplay(conf_matrix, display_labels=["0", "1"])
+	plt.figure(figsize= (8, 6))
+	display.plot(cmap= plt.cm.Blues)
+	plt.title("Confusion Matrix")
 	plt.show()
 
 def roc_curve(x_test, y_test, logreg):
-	y_pred_probability = logreg.predict(x_test)[::1]
-	fpr, tpr, _ = metrics.roc_curve(y_test, y_pred_probability)
-	auc = metrics.roc_auc_score(y_test, y_pred_probability)
-	plt.plot(fpr, tpr, label="data 1, auc=" + str(auc))
-	plt.legend(loc=4)
-	plt.show()
+	pass
 
 if __name__ == "__main__":
 	data = load_dataset()
